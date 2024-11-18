@@ -1,0 +1,40 @@
+---
+import { SEO } from "astro-seo";
+const image = "/images/og-image.png";
+const absoluteImagePath = new URL(image, Astro.site).toString();
+---
+
+<SEO
+  nofollow={false}
+  noindex={false}
+  title="World's Simplest Todo"
+  description="A simple, elegant todo app that helps you focus on your main task for the day."
+  openGraph={{
+    basic: {
+      title: "World's Simplest Todo",
+      type: "A type.",
+      image: absoluteImagePath,
+    },
+  }}
+  twitter={{
+    creator: "@anurag__kochar",
+    card: "summary_large_image",
+    site: "https://simplest-todo.pages.dev/",
+    description:
+      "I create fun, playful projects you can mess around with and enjoy | 📹 Content Creation Enthusiast",
+  }}
+  extend={{
+    meta: [
+      {
+        name: "twitter:image",
+        content: absoluteImagePath,
+      },
+      { name: "twitter:title", content: "World's Simplest Todo" },
+      {
+        name: "twitter:description",
+        content:
+          "A simple, elegant todo app that helps you focus on your main task for the day.",
+      },
+    ],
+  }}
+/>

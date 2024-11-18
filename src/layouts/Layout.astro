@@ -1,5 +1,5 @@
 ---
-import Seo from "../components/seo.astro";
+import Metadata from "../components/metadata.astro";
 
 interface Props {
   title: string;
@@ -11,7 +11,7 @@ const { title } = Astro.props;
 <!doctype html>
 <html lang="en">
   <head>
-    <Seo title={title} />
+    <Metadata />
   </head>
   <body>
     <slot />
