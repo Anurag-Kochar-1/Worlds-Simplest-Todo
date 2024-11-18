@@ -1,0 +1,85 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  canonicalURL?: string | URL;
+  type?: "website" | "article";
+
+  publishedTime?: string;
+  modifiedTime?: string;
+  author?: string;
+
+  keywords?: string[];
+  noindex?: boolean;
+  nofollow?: boolean;
+}
+
+const {
+  title = "World's Simplest Todo",
+  description = "A simple, elegant todo app that helps you focus on your main task for the day.",
+  image = "/images/og-image.png",
+  canonicalURL = new URL(Astro.url.pathname, Astro.site),
+  type = "website",
+  publishedTime,
+  modifiedTime,
+  author = "Your Name",
+  keywords = ["todo", "productivity", "focus", "daily tasks"],
+  noindex = false,
+  nofollow = false,
+} = Astro.props;
+
+const canonicalURLString = canonicalURL.toString();
+
+const absoluteImagePath = new URL(image, Astro.site).toString();
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="generator" content={Astro.generator} />
+
+<title>{title}</title>
+<meta name="title" content={title} />
+<meta name="description" content={description} />
+{keywords.length > 0 && <meta name="keywords" content={keywords.join(", ")} />}
+
+{
+  noindex && (
+    <meta
+      name="robots"
+      content={`${noindex ? "noindex" : "index"}, ${nofollow ? "nofollow" : "follow"}`}
+    />
+  )
+}
+
+<link rel="canonical" href={canonicalURLString} />
+
+<meta property="og:type" content={type} />
+<meta property="og:url" content={canonicalURLString} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={absoluteImagePath} />
+
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content={canonicalURLString} />
+<meta property="twitter:title" content={title} />
+<meta property="twitter:description" content={description} />
+<meta property="twitter:image" content={absoluteImagePath} />
+
+{
+  type === "article" && (
+    <>
+      {publishedTime && (
+        <meta property="article:published_time" content={publishedTime} />
+      )}
+      {modifiedTime && (
+        <meta property="article:modified_time" content={modifiedTime} />
+      )}
+      {author && <meta property="article:author" content={author} />}
+    </>
+  )
+}
+
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="icon" type="image/png" href="/favicon.png" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
