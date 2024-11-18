@@ -1,27 +1,43 @@
 ---
+// components/metadata.astro
 import { SEO } from "astro-seo";
+
+const baseURL = import.meta.env.SITE || "https://simplest-todo.pages.dev";
 const image = "/images/og-image.png";
-const absoluteImagePath = new URL(image, Astro.site).toString();
+const absoluteImagePath = new URL(image, baseURL).href;
+
+// Constants for reuse
+const SITE_TITLE = "World's Simplest Todo";
+const SITE_DESCRIPTION = "A simple, elegant todo app that helps you focus on your main task for the day.";
+const TWITTER_HANDLE = "@anurag__kochar";
+const TWITTER_SITE = "https://simplest-todo.pages.dev/";
+const TWITTER_BIO = "I create fun, playful projects you can mess around with and enjoy | 📹 Content Creation Enthusiast";
 ---
 
 <SEO
   nofollow={false}
   noindex={false}
-  title="World's Simplest Todo"
-  description="A simple, elegant todo app that helps you focus on your main task for the day."
+  title={SITE_TITLE}
+  description={SITE_DESCRIPTION}
   openGraph={{
     basic: {
-      title: "World's Simplest Todo",
-      type: "A type.",
+      title: SITE_TITLE,
+      type: "website",
       image: absoluteImagePath,
+    },
+    optional: {
+      siteName: SITE_TITLE,
+      description: SITE_DESCRIPTION,
+    },
+    image: {
+      alt: "World's Simplest Todo Preview",
     },
   }}
   twitter={{
-    creator: "@anurag__kochar",
+    creator: TWITTER_HANDLE,
     card: "summary_large_image",
-    site: "https://simplest-todo.pages.dev/",
-    description:
-      "I create fun, playful projects you can mess around with and enjoy | 📹 Content Creation Enthusiast",
+    site: TWITTER_SITE,
+    description: TWITTER_BIO,
   }}
   extend={{
     meta: [
@@ -29,11 +45,13 @@ const absoluteImagePath = new URL(image, Astro.site).toString();
         name: "twitter:image",
         content: absoluteImagePath,
       },
-      { name: "twitter:title", content: "World's Simplest Todo" },
+      { 
+        name: "twitter:title", 
+        content: SITE_TITLE 
+      },
       {
         name: "twitter:description",
-        content:
-          "A simple, elegant todo app that helps you focus on your main task for the day.",
+        content: SITE_DESCRIPTION,
       },
     ],
   }}

@@ -1,389 +1,375 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>World's Simplest Todo</title>
-    <script
-      src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"
-    ></script>
-  </head>
-  <body>
-    <div
-      class="flex flex-col items-center justify-center min-h-screen bg-gray-100 gap-8"
-    >
-      <!-- Heading -->
-      <h1 class="text-2xl md:text-3xl font-bold text-gray-800 text-center px-4">
-        Have you completed your main task today?<br />
-        <span class="text-lg md:text-xl font-medium text-gray-600"
-          >If yes, hold the button.</span
-        >
-      </h1>
+---
+import Layout from "../layouts/Layout.astro";
+---
 
-      <!-- Message display -->
-      <div class="flex flex-col items-center gap-2">
-        <div
-          id="message-display"
-          class="text-xl font-medium text-gray-700 h-8 transition-opacity duration-300 opacity-0"
-        >
-        </div>
-        <div
-          id="timer-display"
-          class="text-base text-gray-500 h-6 transition-opacity duration-300 opacity-0"
-        >
-        </div>
-      </div>
-
-      <!-- Checkbox container -->
-      <div
-        class="relative w-32 h-32 cursor-pointer select-none"
-        id="checkbox-container"
+<Layout>
+  <div
+    class="flex flex-col items-center justify-center min-h-screen bg-gray-100 gap-8"
+  >
+    <!-- Heading -->
+    <h1 class="text-2xl md:text-3xl font-bold text-gray-800 text-center px-4">
+      Have you completed your main task today?<br />
+      <span class="text-lg md:text-xl font-medium text-gray-600"
+        >If yes, hold the button.</span
       >
-        <svg class="w-full h-full" viewBox="0 0 100 100">
-          <!-- Background circle -->
-          <circle
-            class="fill-none stroke-gray-200"
-            cx="50"
-            cy="50"
-            r="45"
-            stroke-width="10"></circle>
+    </h1>
 
-          <!-- Progress circle -->
-          <circle
-            id="progress-circle"
-            class="fill-none stroke-blue-500 opacity-0"
-            cx="50"
-            cy="50"
-            r="45"
-            stroke-width="10"
-            stroke-dasharray="282.743"
-            stroke-dashoffset="282.743"
-            transform="rotate(-90 50 50)"></circle>
-
-          <!-- Checkmark -->
-          <path
-            id="checkmark"
-            class="fill-none stroke-green-500 opacity-0 transition-opacity duration-200"
-            stroke-width="10"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M 30 50 L 45 65 L 70 35"></path>
-        </svg>
+    <!-- Message display -->
+    <div class="flex flex-col items-center gap-2">
+      <div
+        id="message-display"
+        class="text-xl font-medium text-gray-700 h-8 transition-opacity duration-300 opacity-0"
+      >
+      </div>
+      <div
+        id="timer-display"
+        class="text-base text-gray-500 h-6 transition-opacity duration-300 opacity-0"
+      >
       </div>
     </div>
 
-    <!-- Reset Button -->
-    <button
-      id="reset-button"
-      class="fixed bottom-6 right-6 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-red-600 transition-all duration-200 opacity-0 pointer-events-none"
+    <!-- Checkbox container -->
+    <div
+      class="relative w-32 h-32 cursor-pointer select-none"
+      id="checkbox-container"
     >
-      Reset Progress
-    </button>
+      <svg class="w-full h-full" viewBox="0 0 100 100">
+        <!-- Background circle -->
+        <circle
+          class="fill-none stroke-gray-200"
+          cx="50"
+          cy="50"
+          r="45"
+          stroke-width="10"></circle>
 
-    <style>
-      .progress-active {
-        opacity: 1 !important;
-      }
+        <!-- Progress circle -->
+        <circle
+          id="progress-circle"
+          class="fill-none stroke-blue-500 opacity-0"
+          cx="50"
+          cy="50"
+          r="45"
+          stroke-width="10"
+          stroke-dasharray="282.743"
+          stroke-dashoffset="282.743"
+          transform="rotate(-90 50 50)"></circle>
 
-      .reset-active {
-        opacity: 1 !important;
-        pointer-events: auto !important;
-      }
-    </style>
+        <!-- Checkmark -->
+        <path
+          id="checkmark"
+          class="fill-none stroke-green-500 opacity-0 transition-opacity duration-200"
+          stroke-width="10"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M 30 50 L 45 65 L 70 35"></path>
+      </svg>
+    </div>
+  </div>
 
-    <script>
-      declare const confetti: {
-        (options?: {
-          particleCount?: number;
-          angle?: number;
-          spread?: number;
-          startVelocity?: number;
-          decay?: number;
-          gravity?: number;
-          drift?: number;
-          ticks?: number;
-          origin?: {
-            x?: number;
-            y?: number;
-          };
-          colors?: string[];
-          shapes?: string[];
-          scalar?: number;
-          zIndex?: number;
-          disableForReducedMotion?: boolean;
-        }): void;
-        reset: () => void;
+  <!-- Reset Button -->
+  <button
+    id="reset-button"
+    class="fixed bottom-6 right-6 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-red-600 transition-all duration-200 opacity-0 pointer-events-none"
+  >
+    Reset Progress
+  </button>
+
+  <style>
+    .progress-active {
+      opacity: 1 !important;
+    }
+
+    .reset-active {
+      opacity: 1 !important;
+      pointer-events: auto !important;
+    }
+  </style>
+
+  <script>
+    declare const confetti: {
+      (options?: {
+        particleCount?: number;
+        angle?: number;
+        spread?: number;
+        startVelocity?: number;
+        decay?: number;
+        gravity?: number;
+        drift?: number;
+        ticks?: number;
+        origin?: {
+          x?: number;
+          y?: number;
+        };
+        colors?: string[];
+        shapes?: string[];
+        scalar?: number;
+        zIndex?: number;
+        disableForReducedMotion?: boolean;
+      }): void;
+      reset: () => void;
+    };
+
+    // Rest of your existing code remains the same
+    function triggerConfetti() {
+      const duration = 3000;
+      const animationEnd = Date.now() + duration;
+      const defaults = {
+        startVelocity: 30,
+        spread: 360,
+        ticks: 60,
+        zIndex: 0,
       };
 
-      // Rest of your existing code remains the same
-      function triggerConfetti() {
-        const duration = 3000;
-        const animationEnd = Date.now() + duration;
-        const defaults = {
-          startVelocity: 30,
-          spread: 360,
-          ticks: 60,
-          zIndex: 0,
-        };
+      function randomInRange(min: number, max: number) {
+        return Math.random() * (max - min) + min;
+      }
 
-        function randomInRange(min: number, max: number) {
-          return Math.random() * (max - min) + min;
+      const interval: any = setInterval(function () {
+        const timeLeft = animationEnd - Date.now();
+
+        if (timeLeft <= 0) {
+          return clearInterval(interval);
         }
 
-        const interval: any = setInterval(function () {
-          const timeLeft = animationEnd - Date.now();
+        const particleCount = 50 * (timeLeft / duration);
 
-          if (timeLeft <= 0) {
-            return clearInterval(interval);
-          }
+        confetti({
+          ...defaults,
+          particleCount,
+          origin: { x: randomInRange(0.1, 0.9), y: Math.random() - 0.2 },
+        });
+      }, 250);
+    }
 
-          const particleCount = 50 * (timeLeft / duration);
+    // Configuration
+    const HOLD_DURATION_MS = 2000;
+    const CIRCLE_CIRCUMFERENCE = 2 * Math.PI * 45;
+    const STORAGE_KEY = "todo_completion";
 
-          confetti({
-            ...defaults,
-            particleCount,
-            origin: { x: randomInRange(0.1, 0.9), y: Math.random() - 0.2 },
+    const PROGRESS_MESSAGES = {
+      5: "Your Sure lil bro?...",
+      25: "Keep going! You're getting started...",
+      50: "Halfway there! Don't give up!",
+      75: "Almost done! Just a little more...",
+    };
+
+    function getTimeUntilTomorrow() {
+      const now = new Date();
+      const tomorrow = new Date(now);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(0, 0, 0, 0);
+
+      const diff = tomorrow.getTime() - now.getTime();
+
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      return {
+        hours: hours.toString().padStart(2, "0"),
+        minutes: minutes.toString().padStart(2, "0"),
+        seconds: seconds.toString().padStart(2, "0"),
+      };
+    }
+
+    class ProgressCheckbox {
+      private container: HTMLElement | null;
+      private progressCircle: HTMLElement | null;
+      private checkmark: HTMLElement | null;
+      private messageDisplay: HTMLElement | null;
+      private timerDisplay: HTMLElement | null;
+      private resetButton: HTMLElement | null;
+      private isHolding: boolean;
+      private isComplete: boolean;
+      private startTime: number;
+      private animationFrame: null | any;
+      private timerInterval: null | any;
+      private lastMessageThreshold: number;
+
+      constructor() {
+        this.container = document.getElementById("checkbox-container");
+        this.progressCircle = document.getElementById("progress-circle");
+        this.checkmark = document.getElementById("checkmark");
+        this.messageDisplay = document.getElementById("message-display");
+        this.timerDisplay = document.getElementById("timer-display");
+        this.resetButton = document.getElementById("reset-button");
+
+        this.isHolding = false;
+        this.isComplete = false;
+        this.startTime = 0;
+        this.animationFrame = null;
+        this.timerInterval = null;
+        this.lastMessageThreshold = 0;
+
+        this.loadState();
+        this.init();
+      }
+
+      private getStorageKey(): string {
+        const today = new Date().toISOString().split("T")[0];
+        return `${STORAGE_KEY}_${today}`;
+      }
+
+      private loadState() {
+        const savedState = localStorage.getItem(this.getStorageKey());
+        if (savedState === "completed") {
+          this.isComplete = true;
+          this.progressCircle!.classList.add("progress-active");
+          this.progressCircle!.style.strokeDashoffset = "0";
+          this.checkmark!.classList.add("progress-active");
+          this.messageDisplay!.textContent = "Task already completed today! ✨";
+          this.messageDisplay!.classList.remove("opacity-0");
+          this.startTimer();
+          this.showResetButton();
+        }
+      }
+
+      private saveState() {
+        localStorage.setItem(this.getStorageKey(), "completed");
+      }
+
+      private startTimer() {
+        this.updateTimer();
+        this.timerInterval = setInterval(() => this.updateTimer(), 1000);
+      }
+
+      private updateTimer() {
+        const timeLeft = getTimeUntilTomorrow();
+        this.timerDisplay!.textContent = `This will reset in ${timeLeft.hours}:${timeLeft.minutes}:${timeLeft.seconds}`;
+        this.timerDisplay!.classList.remove("opacity-0");
+      }
+
+      private showResetButton() {
+        this.resetButton!.classList.add("reset-active");
+      }
+
+      private resetProgress() {
+        localStorage.removeItem(this.getStorageKey());
+        window.location.reload();
+      }
+
+      init() {
+        if (!this.isComplete) {
+          // Mouse events for checkbox
+          this.container!.addEventListener("mousedown", () =>
+            this.startHolding()
+          );
+          this.container!.addEventListener("mouseup", () => this.stopHolding());
+          this.container!.addEventListener("mouseleave", () =>
+            this.stopHolding()
+          );
+
+          // Touch events for checkbox
+          this.container!.addEventListener("touchstart", (e) => {
+            e.preventDefault();
+            this.startHolding();
           });
-        }, 250);
-      }
-
-      // Configuration
-      const HOLD_DURATION_MS = 2000;
-      const CIRCLE_CIRCUMFERENCE = 2 * Math.PI * 45;
-      const STORAGE_KEY = "todo_completion";
-
-      const PROGRESS_MESSAGES = {
-        5: "Your Sure lil bro?...",
-        25: "Keep going! You're getting started...",
-        50: "Halfway there! Don't give up!",
-        75: "Almost done! Just a little more...",
-      };
-
-      function getTimeUntilTomorrow() {
-        const now = new Date();
-        const tomorrow = new Date(now);
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        tomorrow.setHours(0, 0, 0, 0);
-
-        const diff = tomorrow.getTime() - now.getTime();
-
-        const hours = Math.floor(diff / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-        return {
-          hours: hours.toString().padStart(2, "0"),
-          minutes: minutes.toString().padStart(2, "0"),
-          seconds: seconds.toString().padStart(2, "0"),
-        };
-      }
-
-      class ProgressCheckbox {
-        private container: HTMLElement | null;
-        private progressCircle: HTMLElement | null;
-        private checkmark: HTMLElement | null;
-        private messageDisplay: HTMLElement | null;
-        private timerDisplay: HTMLElement | null;
-        private resetButton: HTMLElement | null;
-        private isHolding: boolean;
-        private isComplete: boolean;
-        private startTime: number;
-        private animationFrame: null | any;
-        private timerInterval: null | any;
-        private lastMessageThreshold: number;
-
-        constructor() {
-          this.container = document.getElementById("checkbox-container");
-          this.progressCircle = document.getElementById("progress-circle");
-          this.checkmark = document.getElementById("checkmark");
-          this.messageDisplay = document.getElementById("message-display");
-          this.timerDisplay = document.getElementById("timer-display");
-          this.resetButton = document.getElementById("reset-button");
-
-          this.isHolding = false;
-          this.isComplete = false;
-          this.startTime = 0;
-          this.animationFrame = null;
-          this.timerInterval = null;
-          this.lastMessageThreshold = 0;
-
-          this.loadState();
-          this.init();
-        }
-
-        private getStorageKey(): string {
-          const today = new Date().toISOString().split("T")[0];
-          return `${STORAGE_KEY}_${today}`;
-        }
-
-        private loadState() {
-          const savedState = localStorage.getItem(this.getStorageKey());
-          if (savedState === "completed") {
-            this.isComplete = true;
-            this.progressCircle!.classList.add("progress-active");
-            this.progressCircle!.style.strokeDashoffset = "0";
-            this.checkmark!.classList.add("progress-active");
-            this.messageDisplay!.textContent =
-              "Task already completed today! ✨";
-            this.messageDisplay!.classList.remove("opacity-0");
-            this.startTimer();
-            this.showResetButton();
-          }
-        }
-
-        private saveState() {
-          localStorage.setItem(this.getStorageKey(), "completed");
-        }
-
-        private startTimer() {
-          this.updateTimer();
-          this.timerInterval = setInterval(() => this.updateTimer(), 1000);
-        }
-
-        private updateTimer() {
-          const timeLeft = getTimeUntilTomorrow();
-          this.timerDisplay!.textContent = `This will reset in ${timeLeft.hours}:${timeLeft.minutes}:${timeLeft.seconds}`;
-          this.timerDisplay!.classList.remove("opacity-0");
-        }
-
-        private showResetButton() {
-          this.resetButton!.classList.add("reset-active");
-        }
-
-        private resetProgress() {
-          localStorage.removeItem(this.getStorageKey());
-          window.location.reload();
-        }
-
-        init() {
-          if (!this.isComplete) {
-            // Mouse events for checkbox
-            this.container!.addEventListener("mousedown", () =>
-              this.startHolding()
-            );
-            this.container!.addEventListener("mouseup", () =>
-              this.stopHolding()
-            );
-            this.container!.addEventListener("mouseleave", () =>
-              this.stopHolding()
-            );
-
-            // Touch events for checkbox
-            this.container!.addEventListener("touchstart", (e) => {
-              e.preventDefault();
-              this.startHolding();
-            });
-            this.container!.addEventListener("touchend", () =>
-              this.stopHolding()
-            );
-            this.container!.addEventListener("touchcancel", () =>
-              this.stopHolding()
-            );
-          }
-
-          // Reset button event
-          this.resetButton!.addEventListener("click", () =>
-            this.resetProgress()
+          this.container!.addEventListener("touchend", () =>
+            this.stopHolding()
+          );
+          this.container!.addEventListener("touchcancel", () =>
+            this.stopHolding()
           );
         }
 
-        startHolding() {
-          if (this.isComplete) return;
+        // Reset button event
+        this.resetButton!.addEventListener("click", () => this.resetProgress());
+      }
 
-          this.isHolding = true;
-          this.startTime = performance.now();
-          this.lastMessageThreshold = 0;
-          this.progressCircle!.classList.add("progress-active");
-          this.messageDisplay!.classList.add("opacity-0");
-          this.timerDisplay!.classList.add("opacity-0");
-          this.updateProgress();
+      startHolding() {
+        if (this.isComplete) return;
+
+        this.isHolding = true;
+        this.startTime = performance.now();
+        this.lastMessageThreshold = 0;
+        this.progressCircle!.classList.add("progress-active");
+        this.messageDisplay!.classList.add("opacity-0");
+        this.timerDisplay!.classList.add("opacity-0");
+        this.updateProgress();
+      }
+
+      stopHolding() {
+        if (!this.isHolding) return;
+
+        this.isHolding = false;
+        if (this.animationFrame) {
+          cancelAnimationFrame(this.animationFrame);
         }
 
-        stopHolding() {
-          if (!this.isHolding) return;
-
-          this.isHolding = false;
-          if (this.animationFrame) {
-            cancelAnimationFrame(this.animationFrame);
-          }
-
-          if (!this.isComplete) {
-            this.progressCircle!.style.strokeDashoffset =
-              CIRCLE_CIRCUMFERENCE.toString();
-            this.progressCircle!.classList.remove("progress-active");
-            this.messageDisplay!.classList.add("opacity-0");
-            setTimeout(() => {
-              this.messageDisplay!.textContent = "";
-            }, 300);
-          }
-        }
-
-        updateProgress() {
-          if (!this.isHolding) return;
-
-          const currentTime = performance.now();
-          const elapsedTime = currentTime - this.startTime;
-          const progress = Math.min(elapsedTime / HOLD_DURATION_MS, 1);
-          const progressPercentage = Math.floor(progress * 100);
-
-          // Update progress circle with precise linear motion
-          const dashoffset = CIRCLE_CIRCUMFERENCE * (1 - progress);
-          this.progressCircle!.style.strokeDashoffset = dashoffset.toString();
-
-          // Check for message updates
-          this.updateMessage(progressPercentage);
-
-          if (progress >= 1) {
-            this.complete();
-          } else {
-            this.animationFrame = requestAnimationFrame(() =>
-              this.updateProgress()
-            );
-          }
-        }
-
-        updateMessage(progressPercentage: number) {
-          for (const [threshold, message] of Object.entries(
-            PROGRESS_MESSAGES
-          )) {
-            const numThreshold = parseInt(threshold);
-            if (
-              progressPercentage >= numThreshold &&
-              numThreshold > this.lastMessageThreshold
-            ) {
-              this.lastMessageThreshold = numThreshold;
-              this.messageDisplay!.textContent = message;
-              this.messageDisplay!.classList.remove("opacity-0");
-            }
-          }
-        }
-
-        complete() {
-          this.isComplete = true;
-          this.isHolding = false;
-
-          // Show completion message and checkmark
-          this.messageDisplay!.textContent = "Great job! Task completed! ✨";
-          this.messageDisplay!.classList.remove("opacity-0");
+        if (!this.isComplete) {
+          this.progressCircle!.style.strokeDashoffset =
+            CIRCLE_CIRCUMFERENCE.toString();
           this.progressCircle!.classList.remove("progress-active");
-          this.checkmark!.classList.add("progress-active");
-
-          // Start timer and show reset button
-          this.startTimer();
-          this.showResetButton();
-
-          // Trigger confetti
-          triggerConfetti();
-
-          // Save completion state
-          this.saveState();
+          this.messageDisplay!.classList.add("opacity-0");
+          setTimeout(() => {
+            this.messageDisplay!.textContent = "";
+          }, 300);
         }
       }
 
-      // Initialize when the DOM is loaded
-      document.addEventListener("DOMContentLoaded", () => {
-        new ProgressCheckbox();
-      });
-    </script>
-  </body>
-</html>
+      updateProgress() {
+        if (!this.isHolding) return;
+
+        const currentTime = performance.now();
+        const elapsedTime = currentTime - this.startTime;
+        const progress = Math.min(elapsedTime / HOLD_DURATION_MS, 1);
+        const progressPercentage = Math.floor(progress * 100);
+
+        // Update progress circle with precise linear motion
+        const dashoffset = CIRCLE_CIRCUMFERENCE * (1 - progress);
+        this.progressCircle!.style.strokeDashoffset = dashoffset.toString();
+
+        // Check for message updates
+        this.updateMessage(progressPercentage);
+
+        if (progress >= 1) {
+          this.complete();
+        } else {
+          this.animationFrame = requestAnimationFrame(() =>
+            this.updateProgress()
+          );
+        }
+      }
+
+      updateMessage(progressPercentage: number) {
+        for (const [threshold, message] of Object.entries(PROGRESS_MESSAGES)) {
+          const numThreshold = parseInt(threshold);
+          if (
+            progressPercentage >= numThreshold &&
+            numThreshold > this.lastMessageThreshold
+          ) {
+            this.lastMessageThreshold = numThreshold;
+            this.messageDisplay!.textContent = message;
+            this.messageDisplay!.classList.remove("opacity-0");
+          }
+        }
+      }
+
+      complete() {
+        this.isComplete = true;
+        this.isHolding = false;
+
+        // Show completion message and checkmark
+        this.messageDisplay!.textContent = "Great job! Task completed! ✨";
+        this.messageDisplay!.classList.remove("opacity-0");
+        this.progressCircle!.classList.remove("progress-active");
+        this.checkmark!.classList.add("progress-active");
+
+        // Start timer and show reset button
+        this.startTimer();
+        this.showResetButton();
+
+        // Trigger confetti
+        triggerConfetti();
+
+        // Save completion state
+        this.saveState();
+      }
+    }
+
+    // Initialize when the DOM is loaded
+    document.addEventListener("DOMContentLoaded", () => {
+      new ProgressCheckbox();
+    });
+  </script>
+</Layout>
