@@ -4,7 +4,7 @@ import Layout from "../layouts/Layout.astro";
 
 <Layout>
   <div
-    class="flex flex-col items-center justify-center min-h-screen bg-gray-100 gap-8 w-full"
+    class="flex flex-col items-center justify-center min-h-screen bg-[#E1E5EA] gap-8 w-full"
   >
     <!-- Heading -->
     <h1
@@ -15,7 +15,7 @@ import Layout from "../layouts/Layout.astro";
     </h1>
     <h2
       id="sub-heading"
-      class="!text-4xl !md:text-5xl !lg:text-6xl font-medium text-gray-700 mt-4"
+      class="!text-4xl !md:text-5xl !lg:text-6xl font-medium text-gray-700 mt-4 mb-10"
     >
       If yes, hold the cricle below.
     </h2>
@@ -28,16 +28,17 @@ import Layout from "../layouts/Layout.astro";
       <svg class="w-full h-full" viewBox="0 0 100 100">
         <!-- Background circle -->
         <circle
-          class="fill-none stroke-gray-200"
+          class="fill-none stroke-[#FCFAFE]"
           cx="50"
           cy="50"
           r="45"
+          id="circle-stroke"
           stroke-width="10"></circle>
 
         <!-- Progress circle -->
         <circle
           id="progress-circle"
-          class="fill-none stroke-blue-500 opacity-0"
+          class="fill-none stroke-green-500 opacity-0"
           cx="50"
           cy="50"
           r="45"
@@ -61,10 +62,18 @@ import Layout from "../layouts/Layout.astro";
   <!-- Reset Button -->
   <button
     id="reset-button"
-    class="fixed bottom-6 right-6 text-gray-700 hover:text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-all duration-200 opacity-0 pointer-events-none"
+    class="fixed bottom-6 right-6 text-3xl text-gray-700 hover:text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-all duration-200 opacity-0 pointer-events-none"
   >
     Reset Progress
   </button>
+
+  <p class="fixed left-6 bottom-6 font-medium text-3xl">
+    By <a
+      target="_blank"
+      href="https://x.com/anurag__kochar"
+      class="underline text-sky-600 hover:text-sky-700">@anurag__kochar</a
+    >
+  </p>
 
   <style>
     .progress-active {
@@ -137,10 +146,11 @@ import Layout from "../layouts/Layout.astro";
     const STORAGE_KEY = "todo_completion";
 
     const PROGRESS_MESSAGES = {
-      5: "Your Sure lil bro?...",
-      25: "Bkl, Kiya hai kaam?",
-      50: "Halfway there! Don't give up!",
-      75: "Almost done! Just a little more...",
+      5: "Take a moment to reflect... Task truly done? 🤔",
+      25: "Your integrity matters more than checkboxes ✨",
+      50: "Midway point! Celebrating real achievements! 🌟",
+      75: "The finish line is in sight! Keep going! 💫",
+      90: "About to join today's champions! 👑",
     };
 
     function getTimeUntilTomorrow() {
