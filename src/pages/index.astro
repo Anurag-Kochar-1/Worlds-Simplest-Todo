@@ -72,17 +72,19 @@ import Layout from "../layouts/Layout.astro";
   <!-- Reset Button -->
   <button
     id="reset-button"
-    class="fixed bottom-6 right-6 text-2xl text-gray-700 hover:text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-all duration-200 opacity-0 pointer-events-none"
+    class="fixed bottom-6 right-6 text-2xl text-gray-700 hover:text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-all duration-200 opacity-0 pointer-events-none z-50"
   >
-    Reset Progress
+    Reset
   </button>
 
-  <a
-    target="_blank"
-    href="https://x.com/anurag__kochar"
-    class="fixed left-6 bottom-6 font-medium text-4xl !lg:text-3xl !xl:text-2xl opacity-35 hover:opacity-100 transition-all duration-150 ease-in underline text-sky-600 hover:text-sky-700"
-    >Follow for more such projects!</a
-  >
+  <div class="w-full text-center py-6">
+    <a
+      target="_blank"
+      href="https://x.com/anurag__kochar"
+      class="text-centerfont-medium !text-3xl text-blue-500 hover:text-blue-600 underline transition-all duration-150 ease-in font-medium"
+      >Follow for more such projects!</a
+    >
+  </div>
 
   <style>
     .progress-active {
