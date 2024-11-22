@@ -7,15 +7,20 @@ import Layout from "../layouts/Layout.astro";
     class="flex flex-col items-center justify-center min-h-screen bg-gray-100 gap-8"
   >
     <!-- Heading -->
-    <h1 class="text-2xl md:text-3xl font-bold text-gray-800 text-center px-4">
-      Have you completed your main task today?<br />
-      <span class="text-lg md:text-xl font-medium text-gray-600"
-        >If yes, hold the button.</span
-      >
+    <h1
+      id="heading"
+      class="text-2xl md:text-3xl lg:text-5xl font-bold text-gray-800 text-center px-4"
+    >
+      Have you completed your main task today?
     </h1>
+    <span
+      id="sub-heading"
+      class="text-lg md:text-xl lg:2xl font-medium text-gray-600"
+      >If yes, hold the button.</span
+    >
 
     <!-- Message display -->
-    <div class="flex flex-col items-center gap-2">
+    <!-- <div class="flex flex-col items-center gap-2">
       <div
         id="message-display"
         class="text-xl font-medium text-gray-700 h-8 transition-opacity duration-300 opacity-0"
@@ -26,7 +31,7 @@ import Layout from "../layouts/Layout.astro";
         class="text-base text-gray-500 h-6 transition-opacity duration-300 opacity-0"
       >
       </div>
-    </div>
+    </div> -->
 
     <!-- Checkbox container -->
     <div
@@ -69,7 +74,7 @@ import Layout from "../layouts/Layout.astro";
   <!-- Reset Button -->
   <button
     id="reset-button"
-    class="fixed bottom-6 right-6 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-red-600 transition-all duration-200 opacity-0 pointer-events-none"
+    class="fixed bottom-6 right-6 text-gray-700 hover:text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-all duration-200 opacity-0 pointer-events-none"
   >
     Reset Progress
   </button>
@@ -109,9 +114,8 @@ import Layout from "../layouts/Layout.astro";
       reset: () => void;
     };
 
-    // Rest of your existing code remains the same
     function triggerConfetti() {
-      const duration = 3000;
+      const duration = 8000;
       const animationEnd = Date.now() + duration;
       const defaults = {
         startVelocity: 30,
@@ -141,14 +145,13 @@ import Layout from "../layouts/Layout.astro";
       }, 250);
     }
 
-    // Configuration
-    const HOLD_DURATION_MS = 2000;
+    const HOLD_DURATION_MS = 10000;
     const CIRCLE_CIRCUMFERENCE = 2 * Math.PI * 45;
     const STORAGE_KEY = "todo_completion";
 
     const PROGRESS_MESSAGES = {
       5: "Your Sure lil bro?...",
-      25: "Keep going! You're getting started...",
+      25: "Bkl, Kiya hai kaam?",
       50: "Halfway there! Don't give up!",
       75: "Almost done! Just a little more...",
     };
@@ -176,8 +179,8 @@ import Layout from "../layouts/Layout.astro";
       private container: HTMLElement | null;
       private progressCircle: HTMLElement | null;
       private checkmark: HTMLElement | null;
-      private messageDisplay: HTMLElement | null;
-      private timerDisplay: HTMLElement | null;
+      private heading: HTMLElement | null;
+      private subHeading: HTMLElement | null;
       private resetButton: HTMLElement | null;
       private isHolding: boolean;
       private isComplete: boolean;
@@ -190,8 +193,8 @@ import Layout from "../layouts/Layout.astro";
         this.container = document.getElementById("checkbox-container");
         this.progressCircle = document.getElementById("progress-circle");
         this.checkmark = document.getElementById("checkmark");
-        this.messageDisplay = document.getElementById("message-display");
-        this.timerDisplay = document.getElementById("timer-display");
+        this.heading = document.getElementById("heading");
+        this.subHeading = document.getElementById("sub-heading");
         this.resetButton = document.getElementById("reset-button");
 
         this.isHolding = false;
@@ -217,8 +220,8 @@ import Layout from "../layouts/Layout.astro";
           this.progressCircle!.classList.add("progress-active");
           this.progressCircle!.style.strokeDashoffset = "0";
           this.checkmark!.classList.add("progress-active");
-          this.messageDisplay!.textContent = "Task already completed today! ✨";
-          this.messageDisplay!.classList.remove("opacity-0");
+          this.heading!.textContent = "Task already completed today! ✨";
+          this.subHeading!.classList.remove("opacity-0");
           this.startTimer();
           this.showResetButton();
         }
@@ -235,8 +238,8 @@ import Layout from "../layouts/Layout.astro";
 
       private updateTimer() {
         const timeLeft = getTimeUntilTomorrow();
-        this.timerDisplay!.textContent = `This will reset in ${timeLeft.hours}:${timeLeft.minutes}:${timeLeft.seconds}`;
-        this.timerDisplay!.classList.remove("opacity-0");
+        this.subHeading!.textContent = `This will reset in ${timeLeft.hours}:${timeLeft.minutes}:${timeLeft.seconds}`;
+        this.subHeading!.classList.remove("opacity-0");
       }
 
       private showResetButton() {
@@ -250,7 +253,6 @@ import Layout from "../layouts/Layout.astro";
 
       init() {
         if (!this.isComplete) {
-          // Mouse events for checkbox
           this.container!.addEventListener("mousedown", () =>
             this.startHolding()
           );
@@ -259,7 +261,6 @@ import Layout from "../layouts/Layout.astro";
             this.stopHolding()
           );
 
-          // Touch events for checkbox
           this.container!.addEventListener("touchstart", (e) => {
             e.preventDefault();
             this.startHolding();
@@ -271,8 +272,6 @@ import Layout from "../layouts/Layout.astro";
             this.stopHolding()
           );
         }
-
-        // Reset button event
         this.resetButton!.addEventListener("click", () => this.resetProgress());
       }
 
@@ -283,8 +282,8 @@ import Layout from "../layouts/Layout.astro";
         this.startTime = performance.now();
         this.lastMessageThreshold = 0;
         this.progressCircle!.classList.add("progress-active");
-        this.messageDisplay!.classList.add("opacity-0");
-        this.timerDisplay!.classList.add("opacity-0");
+        this.heading!.classList.add("opacity-0");
+        this.subHeading!.classList.add("opacity-0");
         this.updateProgress();
       }
 
@@ -300,9 +299,12 @@ import Layout from "../layouts/Layout.astro";
           this.progressCircle!.style.strokeDashoffset =
             CIRCLE_CIRCUMFERENCE.toString();
           this.progressCircle!.classList.remove("progress-active");
-          this.messageDisplay!.classList.add("opacity-0");
+          this.heading!.classList.remove("opacity-0");
+          this.subHeading!.classList.remove("opacity-0");
           setTimeout(() => {
-            this.messageDisplay!.textContent = "";
+            this.heading!.textContent =
+              "Have you completed your main task today?";
+            this.subHeading!.textContent = "If yes, hold the button?";
           }, 300);
         }
       }
@@ -314,12 +316,9 @@ import Layout from "../layouts/Layout.astro";
         const elapsedTime = currentTime - this.startTime;
         const progress = Math.min(elapsedTime / HOLD_DURATION_MS, 1);
         const progressPercentage = Math.floor(progress * 100);
-
-        // Update progress circle with precise linear motion
         const dashoffset = CIRCLE_CIRCUMFERENCE * (1 - progress);
         this.progressCircle!.style.strokeDashoffset = dashoffset.toString();
 
-        // Check for message updates
         this.updateMessage(progressPercentage);
 
         if (progress >= 1) {
@@ -339,8 +338,8 @@ import Layout from "../layouts/Layout.astro";
             numThreshold > this.lastMessageThreshold
           ) {
             this.lastMessageThreshold = numThreshold;
-            this.messageDisplay!.textContent = message;
-            this.messageDisplay!.classList.remove("opacity-0");
+            this.heading!.textContent = message;
+            this.heading!.classList.remove("opacity-0");
           }
         }
       }
@@ -349,25 +348,18 @@ import Layout from "../layouts/Layout.astro";
         this.isComplete = true;
         this.isHolding = false;
 
-        // Show completion message and checkmark
-        this.messageDisplay!.textContent = "Great job! Task completed! ✨";
-        this.messageDisplay!.classList.remove("opacity-0");
+        this.heading!.textContent = "Great job! Task completed! ✨";
+        this.heading!.classList.remove("opacity-0");
         this.progressCircle!.classList.remove("progress-active");
         this.checkmark!.classList.add("progress-active");
 
-        // Start timer and show reset button
         this.startTimer();
         this.showResetButton();
-
-        // Trigger confetti
         triggerConfetti();
-
-        // Save completion state
         this.saveState();
       }
     }
 
-    // Initialize when the DOM is loaded
     document.addEventListener("DOMContentLoaded", () => {
       new ProgressCheckbox();
     });
