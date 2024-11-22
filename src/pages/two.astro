@@ -1,0 +1,189 @@
+---
+// Replace the checkbox-container SVG part with this new implementation
+
+<div
+  class="relative size-60 cursor-pointer select-none"
+  id="checkbox-container"
+>
+  <!-- Checkbox outline -->
+  <svg class="w-full h-full" viewBox="0 0 100 100">
+    <!-- Background rectangle -->
+    <rect
+      class="fill-none stroke-[#FCFAFE]"
+      x="10"
+      y="10"
+      width="80"
+      height="80"
+      rx="15"
+      stroke-width="8"
+    />
+
+    <!-- Progress rectangle (clips to fill from bottom) -->
+    <clipPath id="progress-clip">
+      <rect
+        id="progress-clip-rect"
+        x="10"
+        y="90"
+        width="80"
+        height="0"
+        rx="15"
+      />
+    </clipPath>
+
+    <!-- Progress fill -->
+    <rect
+      id="progress-fill"
+      class="fill-green-500 opacity-0"
+      x="10"
+      y="10"
+      width="80"
+      height="80"
+      rx="15"
+      clip-path="url(#progress-clip)"
+    />
+
+    <!-- Checkmark (initially hidden) -->
+    <path
+      id="checkmark"
+      class="fill-none stroke-white opacity-0 transition-opacity duration-300"
+      stroke-width="8"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      d="M 30 50 L 45 65 L 70 35"
+    />
+  </svg>
+</div>
+
+<style>
+  .progress-active {
+    opacity: 1 !important;
+  }
+
+  .reset-active {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  @keyframes check-animation {
+    0% {
+      stroke-dashoffset: 100;
+    }
+    100% {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  #checkmark.animate {
+    stroke-dasharray: 100;
+    animation: check-animation 0.6s ease forwards;
+  }
+</style>
+
+<script>
+  // Replace the relevant parts in your ProgressCheckbox class
+
+  class ProgressCheckbox {
+    // ... (keep existing properties)
+    private progressClipRect: SVGRectElement | null;
+    private progressFill: SVGRectElement | null;
+
+    constructor() {
+      // ... (keep existing initializations)
+      this.progressClipRect = document.getElementById("progress-clip-rect") as SVGRectElement;
+      this.progressFill = document.getElementById("progress-fill") as SVGRectElement;
+      // ... (rest of constructor)
+    }
+
+    startHolding() {
+      if (this.isComplete) return;
+
+      this.isHolding = true;
+      this.startTime = performance.now();
+      this.lastMessageThreshold = 0;
+      this.progressFill!.classList.add("progress-active");
+      this.heading!.classList.add("opacity-0");
+      this.subHeading!.classList.add("opacity-0");
+      this.updateProgress();
+    }
+
+    stopHolding() {
+      if (!this.isHolding) return;
+
+      this.isHolding = false;
+      if (this.animationFrame) {
+        cancelAnimationFrame(this.animationFrame);
+      }
+
+      if (!this.isComplete) {
+        this.progressClipRect!.setAttribute("y", "90");
+        this.progressClipRect!.setAttribute("height", "0");
+        this.progressFill!.classList.remove("progress-active");
+        this.heading!.classList.remove("opacity-0");
+        this.subHeading!.classList.remove("opacity-0");
+        setTimeout(() => {
+          this.heading!.textContent = "Have you completed your main task today?";
+          this.subHeading!.textContent = "If yes, hold the checkbox.";
+        }, 300);
+      }
+    }
+
+    updateProgress() {
+      if (!this.isHolding) return;
+
+      const currentTime = performance.now();
+      const elapsedTime = currentTime - this.startTime;
+      const progress = Math.min(elapsedTime / HOLD_DURATION_MS, 1);
+      const progressPercentage = Math.floor(progress * 100);
+
+      // Update progress rectangle clip path
+      const height = 80 * progress;
+      const y = 90 - height;
+      this.progressClipRect!.setAttribute("height", height.toString());
+      this.progressClipRect!.setAttribute("y", y.toString());
+
+      this.updateMessage(progressPercentage);
+
+      if (progress >= 1) {
+        this.complete();
+      } else {
+        this.animationFrame = requestAnimationFrame(() => this.updateProgress());
+      }
+    }
+
+    complete() {
+      this.isComplete = true;
+      this.isHolding = false;
+
+      // Show completion state
+      this.heading!.textContent = "Great job! Task completed! ✨";
+      this.heading!.classList.remove("opacity-0");
+      
+      // Animate checkmark
+      setTimeout(() => {
+        const checkmark = document.getElementById("checkmark");
+        checkmark!.classList.add("progress-active", "animate");
+      }, 100);
+
+      this.startTimer();
+      this.showResetButton();
+      triggerConfetti();
+      this.saveState();
+    }
+
+    private loadState() {
+      const savedState = localStorage.getItem(this.getStorageKey());
+      if (savedState === "completed") {
+        this.isComplete = true;
+        this.progressFill!.classList.add("progress-active");
+        this.progressClipRect!.setAttribute("y", "10");
+        this.progressClipRect!.setAttribute("height", "80");
+        const checkmark = document.getElementById("checkmark");
+        checkmark!.classList.add("progress-active");
+        this.heading!.textContent = "Task already completed today! ✨";
+        this.subHeading!.classList.remove("opacity-0");
+        this.startTimer();
+        this.showResetButton();
+      }
+    }
+  }
+</script>
