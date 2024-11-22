@@ -1,12 +1,11 @@
 ---
-import Layout from "../layouts/Layout.astro";
+import Layout from "../layouts/layout.astro";
 ---
 
 <Layout>
   <div
     class="flex flex-col items-center justify-center min-h-screen bg-[#E1E5EA] gap-8 w-full"
   >
-    <!-- Heading -->
     <h1
       id="heading"
       class="!text-6xl !md:text-7xl !lg:text-8xl !xl:text-9xl font-bold text-gray-800 text-center px-4"
@@ -17,41 +16,52 @@ import Layout from "../layouts/Layout.astro";
       id="sub-heading"
       class="!text-4xl !md:text-5xl !lg:text-6xl font-medium text-gray-700 mt-4 mb-10"
     >
-      If yes, hold the cricle below.
+      If yes, hold the checkbox below.
     </h2>
 
     <!-- Checkbox container -->
     <div
-      class="relative size-60 cursor-pointer select-none"
+      class="relative size-72 cursor-pointer select-none"
       id="checkbox-container"
     >
       <svg class="w-full h-full" viewBox="0 0 100 100">
-        <!-- Background circle -->
-        <circle
+        <!-- Background rectangle -->
+        <rect
           class="fill-none stroke-[#FCFAFE]"
-          cx="50"
-          cy="50"
-          r="45"
-          id="circle-stroke"
-          stroke-width="10"></circle>
+          x="10"
+          y="10"
+          width="80"
+          height="80"
+          rx="15"
+          stroke-width="8"></rect>
 
-        <!-- Progress circle -->
-        <circle
-          id="progress-circle"
-          class="fill-none stroke-green-500 opacity-0"
-          cx="50"
-          cy="50"
-          r="45"
-          stroke-width="10"
-          stroke-dasharray="282.743"
-          stroke-dashoffset="282.743"
-          transform="rotate(-90 50 50)"></circle>
+        <!-- Progress rectangle (clips to fill from bottom) -->
+        <clipPath id="progress-clip">
+          <rect
+            id="progress-clip-rect"
+            x="10"
+            y="90"
+            width="80"
+            height="0"
+            rx="15"></rect>
+        </clipPath>
+
+        <!-- Progress fill -->
+        <rect
+          id="progress-fill"
+          class="fill-green-500 opacity-0"
+          x="10"
+          y="10"
+          width="80"
+          height="80"
+          rx="15"
+          clip-path="url(#progress-clip)"></rect>
 
         <!-- Checkmark -->
         <path
           id="checkmark"
-          class="fill-none stroke-green-500 opacity-0 transition-opacity duration-200"
-          stroke-width="10"
+          class="fill-none stroke-white opacity-0 transition-opacity duration-300"
+          stroke-width="8"
           stroke-linecap="round"
           stroke-linejoin="round"
           d="M 30 50 L 45 65 L 70 35"></path>
@@ -62,18 +72,17 @@ import Layout from "../layouts/Layout.astro";
   <!-- Reset Button -->
   <button
     id="reset-button"
-    class="fixed bottom-6 right-6 text-3xl text-gray-700 hover:text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-all duration-200 opacity-0 pointer-events-none"
+    class="fixed bottom-6 right-6 text-2xl text-gray-700 hover:text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-all duration-200 opacity-0 pointer-events-none"
   >
     Reset Progress
   </button>
 
-  <p class="fixed left-6 bottom-6 font-medium text-3xl">
-    By <a
-      target="_blank"
-      href="https://x.com/anurag__kochar"
-      class="underline text-sky-600 hover:text-sky-700">@anurag__kochar</a
-    >
-  </p>
+  <a
+    target="_blank"
+    href="https://x.com/anurag__kochar"
+    class="fixed left-6 bottom-6 font-medium text-4xl !lg:text-3xl !xl:text-2xl opacity-35 hover:opacity-100 transition-all duration-150 ease-in underline text-sky-600 hover:text-sky-700"
+    >Follow for more such projects!</a
+  >
 
   <style>
     .progress-active {
@@ -81,8 +90,22 @@ import Layout from "../layouts/Layout.astro";
     }
 
     .reset-active {
-      opacity: 1 !important;
+      opacity: 0.5 !important;
       pointer-events: auto !important;
+    }
+
+    @keyframes check-animation {
+      0% {
+        stroke-dashoffset: 100;
+      }
+      100% {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    #checkmark.animate {
+      stroke-dasharray: 100;
+      animation: check-animation 0.6s ease forwards;
     }
   </style>
 
@@ -141,8 +164,7 @@ import Layout from "../layouts/Layout.astro";
       }, 250);
     }
 
-    const HOLD_DURATION_MS = 10000;
-    const CIRCLE_CIRCUMFERENCE = 2 * Math.PI * 45;
+    const HOLD_DURATION_MS = 8000;
     const STORAGE_KEY = "todo_completion";
 
     const PROGRESS_MESSAGES = {
@@ -174,7 +196,8 @@ import Layout from "../layouts/Layout.astro";
 
     class ProgressCheckbox {
       private container: HTMLElement | null;
-      private progressCircle: HTMLElement | null;
+      private progressClipRect: SVGRectElement | null;
+      private progressFill: SVGRectElement | null;
       private checkmark: HTMLElement | null;
       private heading: HTMLElement | null;
       private subHeading: HTMLElement | null;
@@ -188,7 +211,14 @@ import Layout from "../layouts/Layout.astro";
 
       constructor() {
         this.container = document.getElementById("checkbox-container");
-        this.progressCircle = document.getElementById("progress-circle");
+        // @ts-ignore
+        this.progressClipRect = document.getElementById(
+          "progress-clip-rect"
+        ) as SVGRectElement;
+        // @ts-ignore
+        this.progressFill = document.getElementById(
+          "progress-fill"
+        ) as SVGRectElement;
         this.checkmark = document.getElementById("checkmark");
         this.heading = document.getElementById("heading");
         this.subHeading = document.getElementById("sub-heading");
@@ -214,8 +244,9 @@ import Layout from "../layouts/Layout.astro";
         const savedState = localStorage.getItem(this.getStorageKey());
         if (savedState === "completed") {
           this.isComplete = true;
-          this.progressCircle!.classList.add("progress-active");
-          this.progressCircle!.style.strokeDashoffset = "0";
+          this.progressFill!.classList.add("progress-active");
+          this.progressClipRect!.setAttribute("y", "10");
+          this.progressClipRect!.setAttribute("height", "80");
           this.checkmark!.classList.add("progress-active");
           this.heading!.textContent = "Task already completed today! ✨";
           this.subHeading!.classList.remove("opacity-0");
@@ -278,7 +309,7 @@ import Layout from "../layouts/Layout.astro";
         this.isHolding = true;
         this.startTime = performance.now();
         this.lastMessageThreshold = 0;
-        this.progressCircle!.classList.add("progress-active");
+        this.progressFill!.classList.add("progress-active");
         this.heading!.classList.add("opacity-0");
         this.subHeading!.classList.add("opacity-0");
         this.updateProgress();
@@ -293,15 +324,15 @@ import Layout from "../layouts/Layout.astro";
         }
 
         if (!this.isComplete) {
-          this.progressCircle!.style.strokeDashoffset =
-            CIRCLE_CIRCUMFERENCE.toString();
-          this.progressCircle!.classList.remove("progress-active");
+          this.progressClipRect!.setAttribute("y", "90");
+          this.progressClipRect!.setAttribute("height", "0");
+          this.progressFill!.classList.remove("progress-active");
           this.heading!.classList.remove("opacity-0");
           this.subHeading!.classList.remove("opacity-0");
           setTimeout(() => {
             this.heading!.textContent =
               "Have you completed your main task today?";
-            this.subHeading!.textContent = "If yes, hold the button?";
+            this.subHeading!.textContent = "If yes, hold the checkbox.";
           }, 300);
         }
       }
@@ -313,8 +344,12 @@ import Layout from "../layouts/Layout.astro";
         const elapsedTime = currentTime - this.startTime;
         const progress = Math.min(elapsedTime / HOLD_DURATION_MS, 1);
         const progressPercentage = Math.floor(progress * 100);
-        const dashoffset = CIRCLE_CIRCUMFERENCE * (1 - progress);
-        this.progressCircle!.style.strokeDashoffset = dashoffset.toString();
+
+        // Update progress rectangle clip path
+        const height = 80 * progress;
+        const y = 90 - height;
+        this.progressClipRect!.setAttribute("height", height.toString());
+        this.progressClipRect!.setAttribute("y", y.toString());
 
         this.updateMessage(progressPercentage);
 
@@ -347,8 +382,11 @@ import Layout from "../layouts/Layout.astro";
 
         this.heading!.textContent = "Great job! Task completed! ✨";
         this.heading!.classList.remove("opacity-0");
-        this.progressCircle!.classList.remove("progress-active");
-        this.checkmark!.classList.add("progress-active");
+
+        // Animate checkmark
+        setTimeout(() => {
+          this.checkmark!.classList.add("progress-active", "animate");
+        }, 100);
 
         this.startTimer();
         this.showResetButton();

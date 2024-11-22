@@ -1,6 +1,7 @@
 ---
 import Metadata from "../components/metadata.astro";
 import Favicons from "../components/favicons.astro";
+import Header from "../components/header.astro";
 ---
 
 <!doctype html>
@@ -13,6 +14,7 @@ import Favicons from "../components/favicons.astro";
     ></script>
   </head>
   <body>
+    <Header />
     <slot />
   </body>
 </html>
@@ -30,7 +32,7 @@ import Favicons from "../components/favicons.astro";
   }
   html {
     font-family: system-ui, sans-serif;
-    background: #13151a;
+    background: #E1E5EA;
   }
   code {
     font-family:
